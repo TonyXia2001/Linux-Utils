@@ -7,15 +7,14 @@ stdout, stderr = process.communicate()
 stdout = stdout.decode('utf-8')
 stdout = stdout.split('\n')
 stdout = [e for e in stdout if "index:" in e]
-i = -1
-for e in stdout:
+next = -1
+for i, e in enumerate(stdout):
     if "*" in e:
-        i = int(e.split(':')[1])
-        break
+        next = (i+1) % len(stdout)
+        
 # switch to the next sink
-i -= 1
-i = (i + 1) % len(stdout)
-i += 1
+i = stdout[next].find("index: ")
+i = int(stdout[next][i+7:])
 
 print(f'switching to sink #{i}')
 subprocess.call(["pacmd", "set-default-sink", str(i)])
